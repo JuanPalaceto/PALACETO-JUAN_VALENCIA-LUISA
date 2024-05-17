@@ -17,9 +17,10 @@ public class OdontologoServiceTest {
 
         odontologoService.guardarOdontologo(odontologo);
 
-        Assertions.assertTrue(odontologo.getId()!=0);
+        Assertions.assertTrue(odontologo.getMatricula()!=0);
     }
 
+    @Test
     public void buscarTodos() {
         BD.crearTablas();
         OdontologoService odontologoService = new OdontologoService();

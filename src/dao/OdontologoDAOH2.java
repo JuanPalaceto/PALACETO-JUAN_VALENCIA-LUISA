@@ -17,7 +17,7 @@ public class OdontologoDAOH2 implements IDao<Odontologo>{
             Connection connection = BD.getConnection();
 
             // 2 Crear la sentencia
-            preparedStatement = connection.prepareStatement("INSERT INTO ODONTOLOGOS VALUES (?,?,?)");
+            preparedStatement = connection.prepareStatement("INSERT INTO ODONTOLOGOS (MATRICULA, NOMBRE, APELLIDO) VALUES (?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, odontologo.getMatricula());
             preparedStatement.setString(2, odontologo.getNombre());
             preparedStatement.setString(3, odontologo.getApellido());
@@ -25,7 +25,7 @@ public class OdontologoDAOH2 implements IDao<Odontologo>{
             // Ejecutar la sentencia
             preparedStatement.executeUpdate();
 
-            logger.info("Odontologo guardado en base de datos: " + odontologo.getMatricula());
+            logger.info("Odontologo guardado en base de datos: " + odontologo.getId());
 
             preparedStatement.close();
 
@@ -46,16 +46,16 @@ public class OdontologoDAOH2 implements IDao<Odontologo>{
             Connection connection = BD.getConnection();
 
             // 2 Crear la sentencia
-            preparedStatement = connection.prepareStatement("SELECT FROM ODONTOLOGOS");
+            preparedStatement = connection.prepareStatement("SELECT * FROM ODONTOLOGOS");
 
             // Ejecutar la sentencia
             ResultSet set = preparedStatement.executeQuery();
 
             // 4 evaluar los resultados
             while(set.next()) {
-                int matricula = set.getInt("id");
-                String nombre = set.getString("nombre");
-                String apellido = set.getString("apellido");
+                int matricula = set.getInt(1);
+                String nombre = set.getString(2);
+                String apellido = set.getString(3);
 
                 Odontologo odontologo = new Odontologo(matricula, nombre, apellido);
 

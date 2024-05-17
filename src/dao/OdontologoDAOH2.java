@@ -1,4 +1,75 @@
 package dao;
 
-public class OdontologoDAOH2 {
+import model.Odontologo;
+import org.apache.log4j.Logger;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class OdontologoDAOH2 implements IDao<Odontologo>{
+    private static final Logger logger= Logger.getLogger(OdontologoDAOH2.class);
+    @Override
+    public Odontologo guardar(Odontologo odontologo) {
+        PreparedStatement preparedStatement = null;
+
+        try {
+            Connection connection = BD.getConnection();
+
+            // 2 Crear la sentencia
+            preparedStatement = connection.prepareStatement("INSERT INTO ODONTOLOGOS VALUES (?,?,?)");
+            preparedStatement.setInt(1, odontologo.getMatricula());
+            preparedStatement.setString(2, odontologo.getNombre());
+            preparedStatement.setString(3, odontologo.getApellido());
+
+            // Ejecutar la sentencia
+            preparedStatement.executeUpdate();
+
+            logger.info("Odontologo guardado en base de datos: " + odontologo.getMatricula());
+
+            preparedStatement.close();
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+
+        return odontologo;
+    }
+
+    @Override
+    public List buscarTodos() {
+        PreparedStatement preparedStatement = null;
+        List<Odontologo> odontologos = new ArrayList();
+
+        try {
+            // 1 Levantar el drive y conectarnos
+            Connection connection = BD.getConnection();
+
+            // 2 Crear la sentencia
+            preparedStatement = connection.prepareStatement("SELECT FROM ODONTOLOGOS");
+
+            // Ejecutar la sentencia
+            ResultSet set = preparedStatement.executeQuery();
+
+            // 4 evaluar los resultados
+            while(set.next()) {
+                int matricula = set.getInt("id");
+                String nombre = set.getString("nombre");
+                String apellido = set.getString("apellido");
+
+                Odontologo odontologo = new Odontologo(matricula, nombre, apellido);
+
+                odontologos.add(odontologo);
+            }
+
+            logger.info("Se consultaron odontologos de base de datos.");
+
+            preparedStatement.close();
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+
+        return odontologos;
+    }
 }
